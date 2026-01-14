@@ -160,22 +160,24 @@ export const generateInterviewScript = async (params: InterviewParams): Promise<
 
 export const generateJobDescription = async (params: JobDescriptionParams): Promise<string> => {
   const prompt = `
-    Atue como um Recrutador Especialista em Tech.
-    Crie uma Descrição de Vaga (Job Description) atraente e bem estruturada para a seguinte posição:
+    Atue como um Especialista em RH e Recrutamento.
+    Crie uma descrição de vaga (Job Description) atraente, profissional e estruturada para a seguinte posição:
 
-    Cargo: ${params.title}
+    Título: ${params.title}
     Departamento: ${params.department}
     Senioridade: ${params.seniority}
     Localização: ${params.location}
     Tipo de Contrato: ${params.type}
-    Requisitos/Habilidades: ${params.skills}
+    Habilidades/Requisitos: ${params.skills}
 
-    A descrição deve conter:
-    1. Título da Vaga e Introdução à Empresa (fictícia, inovadora).
-    2. Responsabilidades do dia a dia.
-    3. Requisitos Obrigatórios e Diferenciais.
-    4. Benefícios e Cultura.
-    5. Formatação em Markdown limpo e profissional.
+    A descrição deve incluir:
+    1. Sobre a Empresa (crie um texto genérico mas inspirador sobre uma empresa de tecnologia inovadora).
+    2. Responsabilidades do cargo.
+    3. Requisitos Obrigatórios.
+    4. Diferenciais.
+    5. Benefícios (sugira benefícios padrão de mercado para tecnologia).
+    
+    Formate em Markdown limpo e profissional.
   `;
 
   try {
