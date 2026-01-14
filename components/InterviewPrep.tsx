@@ -6,17 +6,21 @@ const InterviewPrep: React.FC = () => {
   const [loading, setLoading] = useState(false);
   const [result, setResult] = useState<InterviewScriptResult | null>(null);
   const [params, setParams] = useState<InterviewParams>({
-    role: '',
-    focus: 'Técnico e Resolução de Problemas',
-    experienceLevel: 'Sênior'
+    jobDescription: '',
+    resumeText: '',
+    focus: 'Técnico e Comportamental'
   });
 
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) => {
     setParams({ ...params, [e.target.name]: e.target.value });
   };
 
   const handleGenerate = async (e: React.FormEvent) => {
     e.preventDefault();
+    if (!params.jobDescription || !params.resumeText) {
+      alert("Por favor, forneça a descrição da vaga e o currículo.");
+      return;
+    }
     setLoading(true);
     setResult(null);
     try {
@@ -30,57 +34,57 @@ const InterviewPrep: React.FC = () => {
   };
 
   return (
-    <div className="max-w-5xl mx-auto space-y-8">
+    <div className="max-w-6xl mx-auto space-y-8">
       {/* Config Panel */}
-      <div className="bg-gradient-to-r from-indigo-600 to-violet-600 rounded-2xl shadow-xl p-8 text-white">
-        <h2 className="text-2xl font-bold mb-6 flex items-center gap-2">
-          <svg className="w-7 h-7" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 11a7 7 0 01-7 7m0 0a7 7 0 01-7-7m7 7v4m0 0H8m4 0h4m-4-8a3 3 0 01-3-3V5a3 3 0 116 0v6a3 3 0 01-3 3z" /></svg>
-          Preparador de Entrevistas
+      <div className="bg-white rounded-2xl shadow-md border border-slate-200 p-8">
+        <h2 className="text-2xl font-bold text-slate-800 mb-6 flex items-center gap-2">
+          <svg className="w-7 h-7 text-violet-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 11a7 7 0 01-7 7m0 0a7 7 0 01-7-7m7 7v4m0 0H8m4 0h4m-4-8a3 3 0 01-3-3V5a3 3 0 116 0v6a3 3 0 01-3 3z" /></svg>
+          Preparador de Entrevistas Inteligente
         </h2>
-        <form onSubmit={handleGenerate} className="grid grid-cols-1 md:grid-cols-4 gap-4 items-end">
-          <div className="md:col-span-1">
-            <label className="block text-sm font-medium text-indigo-100 mb-1">Cargo / Função</label>
-            <input
+        <p className="text-slate-600 mb-6">Gere perguntas baseadas especificamente nas lacunas do currículo em relação à vaga.</p>
+        
+        <form onSubmit={handleGenerate} className="grid grid-cols-1 md:grid-cols-2 gap-6">
+          <div>
+            <label className="block text-sm font-medium text-slate-700 mb-2">Descrição da Vaga</label>
+            <textarea
               required
-              name="role"
-              value={params.role}
+              name="jobDescription"
+              value={params.jobDescription}
               onChange={handleChange}
-              placeholder="Ex: Product Manager"
-              className="w-full px-4 py-2 bg-white/10 border border-white/20 rounded-lg text-white placeholder-indigo-200 focus:outline-none focus:ring-2 focus:ring-white/50"
+              placeholder="Cole a descrição da vaga..."
+              className="w-full h-32 px-4 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-violet-500 focus:border-violet-500 transition-colors resize-none"
             />
           </div>
-          <div className="md:col-span-1">
-            <label className="block text-sm font-medium text-indigo-100 mb-1">Foco da Entrevista</label>
-            <input
+          <div>
+            <label className="block text-sm font-medium text-slate-700 mb-2">Currículo do Candidato</label>
+            <textarea
               required
-              name="focus"
-              value={params.focus}
+              name="resumeText"
+              value={params.resumeText}
               onChange={handleChange}
-              placeholder="Ex: Liderança, Técnico..."
-              className="w-full px-4 py-2 bg-white/10 border border-white/20 rounded-lg text-white placeholder-indigo-200 focus:outline-none focus:ring-2 focus:ring-white/50"
+              placeholder="Cole o currículo do candidato..."
+              className="w-full h-32 px-4 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-violet-500 focus:border-violet-500 transition-colors resize-none"
             />
           </div>
-          <div className="md:col-span-1">
-            <label className="block text-sm font-medium text-indigo-100 mb-1">Nível</label>
-            <select
-              name="experienceLevel"
-              value={params.experienceLevel}
-              onChange={handleChange}
-              className="w-full px-4 py-2 bg-white/10 border border-white/20 rounded-lg text-white focus:outline-none focus:ring-2 focus:ring-white/50 [&>option]:text-slate-900"
-            >
-              <option>Júnior</option>
-              <option>Pleno</option>
-              <option>Sênior</option>
-              <option>Executivo / C-Level</option>
-            </select>
-          </div>
-          <div className="md:col-span-1">
-            <button
+          
+          <div className="md:col-span-2 flex items-center gap-4">
+             <div className="flex-1">
+                <label className="block text-sm font-medium text-slate-700 mb-2">Foco Principal</label>
+                <input
+                  required
+                  name="focus"
+                  value={params.focus}
+                  onChange={handleChange}
+                  placeholder="Ex: Liderança, Python, Cultura..."
+                  className="w-full px-4 py-3 border border-slate-300 rounded-lg focus:ring-2 focus:ring-violet-500 focus:border-violet-500"
+                />
+             </div>
+             <button
               type="submit"
               disabled={loading}
-              className="w-full py-2 bg-white text-indigo-600 font-bold rounded-lg hover:bg-indigo-50 transition-colors shadow-lg disabled:opacity-70"
+              className="mt-7 px-8 py-3 bg-violet-600 text-white font-bold rounded-lg hover:bg-violet-700 transition-colors shadow-lg disabled:opacity-70 flex-shrink-0"
             >
-              {loading ? 'Gerando...' : 'Criar Roteiro'}
+              {loading ? 'Analisando e Gerando...' : 'Gerar Perguntas'}
             </button>
           </div>
         </form>
@@ -90,28 +94,33 @@ const InterviewPrep: React.FC = () => {
       {result && (
         <div className="space-y-6 animate-fade-in-up pb-12">
           {/* Intro Card */}
-          <div className="bg-white p-6 rounded-xl shadow-sm border-l-4 border-indigo-500">
-            <h3 className="text-sm font-bold uppercase tracking-wide text-slate-400 mb-2">Introdução Sugerida</h3>
-            <p className="text-slate-700 italic text-lg leading-relaxed">"{result.introduction}"</p>
+          <div className="bg-violet-50 p-6 rounded-xl border border-violet-100">
+            <h3 className="text-sm font-bold uppercase tracking-wide text-violet-600 mb-2">Introdução</h3>
+            <p className="text-slate-800 leading-relaxed">{result.introduction}</p>
           </div>
 
           <div className="space-y-4">
-            <h3 className="text-xl font-bold text-slate-800 ml-2">Perguntas Sugeridas</h3>
+            <h3 className="text-xl font-bold text-slate-800 ml-2">Roteiro de Perguntas</h3>
             {result.questions.map((q, idx) => (
               <div key={idx} className="bg-white rounded-xl shadow-sm border border-slate-200 overflow-hidden transition-all hover:shadow-md">
                 <div className="bg-slate-50 px-6 py-4 border-b border-slate-100 flex justify-between items-center">
-                  <span className="font-bold text-indigo-900 text-lg">Q{idx + 1}</span>
-                  <span className="px-3 py-1 bg-indigo-100 text-indigo-700 text-xs font-bold uppercase rounded-full tracking-wider">
-                    {q.category}
-                  </span>
+                  <div className="flex items-center gap-3">
+                    <span className="w-8 h-8 bg-slate-800 text-white rounded-full flex items-center justify-center font-bold text-sm">{idx + 1}</span>
+                    <span className="px-3 py-1 bg-violet-100 text-violet-700 text-xs font-bold uppercase rounded-full tracking-wider">
+                      {q.category}
+                    </span>
+                  </div>
                 </div>
                 <div className="p-6">
-                  <p className="text-lg text-slate-800 font-medium mb-4">{q.question}</p>
+                  <p className="text-lg text-slate-900 font-medium mb-3">{q.question}</p>
+                  <p className="text-sm text-slate-500 italic mb-4 border-l-2 border-slate-300 pl-3">
+                    Contexto: {q.context}
+                  </p>
                   
                   <div className="bg-slate-50 rounded-lg p-4">
                     <h4 className="text-sm font-semibold text-slate-500 mb-2 uppercase tracking-wide flex items-center gap-2">
                       <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
-                      O que esperar da resposta:
+                      Pontos esperados na resposta:
                     </h4>
                     <ul className="space-y-2">
                       {q.expectedAnswerKeyPoints.map((point, i) => (
@@ -128,8 +137,8 @@ const InterviewPrep: React.FC = () => {
           </div>
 
           <div className="bg-slate-800 p-6 rounded-xl shadow-sm text-slate-200">
-            <h3 className="text-sm font-bold uppercase tracking-wide text-slate-400 mb-2">Encerramento Sugerido</h3>
-            <p className="italic">"{result.closing}"</p>
+            <h3 className="text-sm font-bold uppercase tracking-wide text-slate-400 mb-2">Conclusão</h3>
+            <p>{result.closing}</p>
           </div>
         </div>
       )}
