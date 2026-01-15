@@ -9,19 +9,19 @@ const MODEL_NAME = "gemini-3-flash-preview";
 export const optimizeResume = async (params: ResumeOptimizerParams): Promise<ResumeOptimizationResult> => {
   const prompt = `
     Atue como um Especialista em Currículos e ATS (Applicant Tracking Systems).
-    Sua tarefa é reescrever e otimizar o currículo fornecido para maximizar as chances de aprovação na vaga descrita.
-    
+    Sua tarefa é reescrever o currículo fornecido para torná-lo mais atraente para a vaga descrita, mantendo a integridade total dos dados.
+
     DESCRIÇÃO DA VAGA:
     ${params.jobDescription}
 
     CURRÍCULO ORIGINAL:
     ${params.resumeText}
 
-    Diretrizes:
-    1. Mantenha a verdade, mas refraseie experiências para destacar resultados mensuráveis.
-    2. Integre palavras-chave da vaga naturalmente.
-    3. Ajuste o resumo profissional.
-    4. Melhore a formatação para Markdown limpo.
+    REGRAS CRÍTICAS (OBRIGATÓRIO):
+    1. VERACIDADE ESTRITA: NÃO invente, adicione ou deduza habilidades, cargos, ferramentas ou experiências que não estejam EXPLICITAMENTE no currículo original. Se o candidato não tem um requisito da vaga, não o inclua. Trabalhe apenas com o que o candidato tem.
+    2. FORMATAÇÃO WORD-FRIENDLY: O resultado 'optimizedContent' deve ser formatado de forma limpa e hierárquica (use Markdown simples: # para títulos, ## para subtítulos, - para listas). Evite caracteres especiais complexos ou layouts que quebrem ao colar no MS Word.
+    3. PALAVRAS-CHAVE: Substitua sinônimos do currículo original pelas palavras-chave exatas da vaga (Ex: se o CV diz "Vendas", mas a vaga pede "Prospecção Comercial", e o contexto permitir, altere).
+    4. FOCO EM RESULTADOS: Reescreva as descrições de experiências para focar em conquistas e impacto, usando verbos de ação.
 
     Responda em JSON.
   `;
@@ -29,9 +29,9 @@ export const optimizeResume = async (params: ResumeOptimizerParams): Promise<Res
   const schema: Schema = {
     type: Type.OBJECT,
     properties: {
-      optimizedContent: { type: Type.STRING, description: "O currículo completo reescrito em formato Markdown." },
-      keyChanges: { type: Type.ARRAY, items: { type: Type.STRING }, description: "Lista das principais melhorias feitas (ex: 'Adicionado resultado de 20% em vendas')." },
-      atsKeywordsAdded: { type: Type.ARRAY, items: { type: Type.STRING }, description: "Lista de palavras-chave da vaga que foram inseridas." }
+      optimizedContent: { type: Type.STRING, description: "O currículo completo reescrito, formatado de forma limpa e simples para fácil cópia para o Word." },
+      keyChanges: { type: Type.ARRAY, items: { type: Type.STRING }, description: "Lista das principais melhorias de fraseamento realizadas." },
+      atsKeywordsAdded: { type: Type.ARRAY, items: { type: Type.STRING }, description: "Lista de termos da vaga que foram encontrados no CV original e enfatizados (sem invenção)." }
     },
     required: ["optimizedContent", "keyChanges", "atsKeywordsAdded"]
   };
@@ -160,24 +160,25 @@ export const generateInterviewScript = async (params: InterviewParams): Promise<
 
 export const generateJobDescription = async (params: JobDescriptionParams): Promise<string> => {
   const prompt = `
-    Atue como um Especialista em RH e Recrutamento.
-    Crie uma descrição de vaga (Job Description) atraente, profissional e estruturada para a seguinte posição:
-
-    Título: ${params.title}
-    Departamento: ${params.department}
-    Senioridade: ${params.seniority}
-    Localização: ${params.location}
-    Tipo de Contrato: ${params.type}
-    Habilidades/Requisitos: ${params.skills}
-
-    A descrição deve incluir:
-    1. Sobre a Empresa (crie um texto genérico mas inspirador sobre uma empresa de tecnologia inovadora).
-    2. Responsabilidades do cargo.
-    3. Requisitos Obrigatórios.
-    4. Diferenciais.
-    5. Benefícios (sugira benefícios padrão de mercado para tecnologia).
+    Atue como um Recrutador Sênior de Tecnologia.
+    Crie uma descrição de vaga (Job Description) profissional, atraente e inclusiva.
     
-    Formate em Markdown limpo e profissional.
+    DETALHES DA POSIÇÃO:
+    Cargo: ${params.title}
+    Área: ${params.department}
+    Nível: ${params.seniority}
+    Localização: ${params.location}
+    Contrato: ${params.type}
+    Requisitos Técnicos: ${params.skills}
+    
+    A descrição deve conter:
+    - Um parágrafo introdutório empolgante sobre a oportunidade.
+    - Responsabilidades e Atribuições (bullet points).
+    - Requisitos e Qualificações (bullet points).
+    - Diferenciais (bullet points).
+    - Benefícios sugeridos para este nível de cargo.
+    
+    Formatação: Markdown limpo.
   `;
 
   try {
@@ -185,7 +186,6 @@ export const generateJobDescription = async (params: JobDescriptionParams): Prom
       model: MODEL_NAME,
       contents: prompt,
     });
-
     return response.text || "";
   } catch (error) {
     console.error("Gemini Job Gen Error:", error);
